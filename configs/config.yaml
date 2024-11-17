@@ -1,18 +1,18 @@
 model:
-  model_dir: yolov11n.pt
+  model_dir: models/outfile_14_best.pt
   data_dir: data/vehicle_detection
   project_name: vehicle_detection
 
 train:
   epochs: 100
   imgsz: 640
-  batch: None
-  resume: None
+  batch: 
+  resume: 
   patience: 20
-  optimizer: None
+  optimizer: 
   
 predict:
-  source: None
-  conf: None
-  iou: None
+  source: 
+  conf: 
+  iou: 
   imgsz: 640
