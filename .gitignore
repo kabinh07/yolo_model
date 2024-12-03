@@ -4,4 +4,7 @@ __pycache__
 *.txt
 *.pt
 data/*
-runs/*
+!data/*md
+*.webm
+*.avi
+runs

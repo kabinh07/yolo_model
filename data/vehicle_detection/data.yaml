@@ -1,7 +1,0 @@
-path: /home/kabin/Polygon/github/yolo_model/yolo_model/data/vehicle_detection
-train: train/
-val: valid/
-test: test/
-
-nc: 4
-names: ['harvester', 'person', 'post', 'trunk']

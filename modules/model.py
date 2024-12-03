@@ -10,23 +10,18 @@ class YOLOModel:
         self.project_name = os.path.join('runs', self.config.model.project_name)
     
     def train(self):
-        config = {}
-        for key, value in self.config.train.items():
-            if not value is None:
-                config[key] = value
-        if not 'data' in config.keys():
-            config['data'] = os.path.join(self.data_dir, 'data.yaml')
-        config['project'] = self.project_name
-        print(config)
-        self.model.train(**config)
+        if not 'data' in self.config.train.keys():
+            self.config.train['data'] = os.path.join(self.data_dir, 'data.yaml')
+        self.config.train['project'] = self.project_name
+        self.model.train(**self.config.train)
         return
 
     def predict(self):
-        config = {}
-        for key, value in self.config.predict.items():
-            if not value is None:
-                config[key] = value
-        config['project'] = self.project_name
-        self.model.predict(**config)
+        self.config.predict['project'] = self.project_name
+        self.model.predict(**self.config.predict)
         return
-        
+
+    def track(self):
+        self.config.track['project'] = self.project_name
+        self.model.track(**self.config.track)
+        return
