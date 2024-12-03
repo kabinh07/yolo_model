@@ -29,4 +29,7 @@ class YOLOModel:
         config['project'] = self.project_name
         self.model.predict(**config)
         return
+
+    def track(self):
+        
         
