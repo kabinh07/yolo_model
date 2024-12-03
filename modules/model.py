@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 import os
-import subprocess
 
 class YOLOModel:
     def __init__(self, config):
