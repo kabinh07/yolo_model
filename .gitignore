@@ -5,3 +5,6 @@ __pycache__
 *.pt
 data/*
 !data/*md
+*.webm
+*.avi
+runs

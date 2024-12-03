@@ -1,5 +1,5 @@
 model:
-  model_dir: models/outfile_14_best.pt
+  model_dir: models/best.pt
   data_dir: data/vehicle_detection
   project_name: vehicle_detection
 
@@ -16,3 +16,8 @@ predict:
   conf: 
   iou: 
   imgsz: 640
+
+track:
+  source: data/test_video/test_video.webm
+  save: True
+
