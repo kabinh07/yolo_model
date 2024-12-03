@@ -1,7 +1,7 @@
 model:
   model_dir: models/outfile_14_best.pt
   data_dir: data/vehicle_detection
-  project_name: vehicle_detection
+  project_name: vehicle_detection_2
 
 train:
   epochs: 100
@@ -12,7 +12,8 @@ train:
   optimizer: 
   
 predict:
-  source: 
-  conf: 
+  source: data/vehicle_detection/cctv_footage_frames
+  conf: 0.5
   iou: 
   imgsz: 640
+  save: True
