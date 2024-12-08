@@ -3,6 +3,7 @@ import yaml
 import json
 from addict import Dict
 from modules.model import YOLOModel
+import numpy as np
 
 def remove_null_params(config):
     dic = Dict()
@@ -22,15 +23,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("method", type=str, help="type if want to train, test, predict etc.")
     args = parser.parse_args()
-
+    results = None
     if args.method == 'train':
         model.train()
     elif args.method == 'predict':
         model.predict()
     elif args.method == 'track':
         model.track()
+    elif args.method == 'count': 
+        model.count()
     else:
         print("invalid arguments")
-
+    # boxes_ids = []
+    # for result in results:
+    #     row = {}
+    #     row['ids'] = result.boxes.id.numpy()
+    #     row['boxes'] = result.boxes.xyxyn.numpy()
+    #     boxes_ids.append(row)
+    # with open('results.json', 'w') as f:
+    #     json.dump(boxes_ids, f)
 if __name__ == "__main__":
     main()
