@@ -26,35 +26,31 @@ class YOLOModel:
 
     def track(self):
         self.config.track['project'] = self.project_name
-        save_path = os.path.join(self.project_name, 'custom_track')
-        count = 1
-        while True:
-            if os.path.exists(save_path):
-                count += 1
-                save_path = os.path.join(self.project_name, f'custom_track{count}')
-            else: 
-                break
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
-        # result = self.model.track(**self.config.track)
-        cap = cv2.VideoCapture(self.config.track.source)
-        assert cap.isOpened()
-        count = 0
-        while cap.isOpened():
-            success, im0 = cap.read()
-            if success:
-                img = Image.fromarray(im0)
-                results = self.model.track(im0, persist=True, verbose = False)
-                draw = ImageDraw.Draw(img)
-                for idx, box in zip(results[0].boxes.id, results[0].boxes.xyxy):
-                    draw.rectangle(box.numpy(), outline = 'red', width=2)
-                    draw.text((box[0], box[1]), str(idx.item()), font=self.font)
-                img.save(os.path.join(save_path, f'image_{count}.jpg'))
-                count += 1
-            else:
-                break    
-        cap.release()
-        cv2.destroyAllWindows()
+        if not self.config.track.track_id:
+            self.__tracker_config_normalizer()
+            self.model.track(**self.config.track)
+        else:
+            save_path = self.__create_sequential_folder('track')
+            cap = cv2.VideoCapture(self.config.track.source)
+            self.__tracker_config_normalizer()
+            assert cap.isOpened()
+            w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
+            video_writer = cv2.VideoWriter(os.path.join(save_path, 'vehicle_tracking_output.avi'), cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
+            while cap.isOpened():
+                success, im0 = cap.read()
+                if success:
+                    img = Image.fromarray(im0)
+                    results = self.model.track(im0, persist=True, **self.config.track)
+                    draw = ImageDraw.Draw(img)
+                    for idx, box in zip(results[0].boxes.id, results[0].boxes.xyxy):
+                        draw.rectangle(box.numpy(), outline = 'red', width=2)
+                        draw.text((box[0], box[1]), str(idx.item()), font=self.font)
+                    video_writer.write(im0)
+                else:
+                    break    
+            cap.release()
+            video_writer.release()
+            cv2.destroyAllWindows()
         return
     
     def count(self):
@@ -77,5 +73,30 @@ class YOLOModel:
         cv2.destroyAllWindows()
         return
     
-    def __tracker_config_customizer(self):
-        if self.config.track.
+    def __tracker_config_normalizer(self):
+        config = {}
+        if self.config.track.track_id:
+            for key, value in self.config.track.items():
+                if key == "source" or key == "track_id" or key == "save":
+                    continue
+                config[key] = value
+        else:
+            for key, value in self.config.track.items():
+                if key == "track_id":
+                    continue
+                config[key] = value
+        self.config.track = config
+        return
+    
+    def __create_sequential_folder(self, filename):
+        save_path = os.path.join(self.project_name, filename)
+        count = 1
+        while True:
+            if os.path.exists(save_path):
+                count += 1
+                save_path = os.path.join(self.project_name, f'{filename}{count}')
+            else: 
+                break
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        return save_path

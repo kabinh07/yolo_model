@@ -34,13 +34,6 @@ def main():
         model.count()
     else:
         print("invalid arguments")
-    # boxes_ids = []
-    # for result in results:
-    #     row = {}
-    #     row['ids'] = result.boxes.id.numpy()
-    #     row['boxes'] = result.boxes.xyxyn.numpy()
-    #     boxes_ids.append(row)
-    # with open('results.json', 'w') as f:
-    #     json.dump(boxes_ids, f)
+
 if __name__ == "__main__":
     main()
