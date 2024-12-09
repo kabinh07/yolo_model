@@ -2,6 +2,7 @@ from ultralytics import YOLO, solutions
 from PIL import Image, ImageDraw, ImageFont
 import cv2
 import os
+import numpy as np
 
 class YOLOModel:
     def __init__(self, config):
@@ -45,7 +46,7 @@ class YOLOModel:
                     for idx, box in zip(results[0].boxes.id, results[0].boxes.xyxy):
                         draw.rectangle(box.numpy(), outline = 'red', width=2)
                         draw.text((box[0], box[1]), str(idx.item()), font=self.font)
-                    video_writer.write(im0)
+                    video_writer.write(np.array(img))
                 else:
                     break    
             cap.release()

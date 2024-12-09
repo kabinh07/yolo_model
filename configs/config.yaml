@@ -26,3 +26,5 @@ track:
   vid_stride: 50
   line_width: 1
   verbose: False
+  tracker: configs/botsort.yaml
+
