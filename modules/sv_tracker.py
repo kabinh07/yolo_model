@@ -7,7 +7,7 @@ class SVTracker(YOLOModel):
     def __init__(self, config):
         super().__init__(config)
         self.tracker = sv.ByteTrack()
-        self.box_annotator = sv.BoxCornerAnnotator()
+        self.box_annotator = sv.BoxAnnotator()
         self.label_annotator = sv.LabelAnnotator()
         self.source_path = self.config.track.source
         self.config = self.tracker_config_normalizer(config)
