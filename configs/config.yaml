@@ -22,9 +22,11 @@ track:
   track_id: True
   source: data/test_video/test_video.webm
   save: True
+  conf: 0.5
   stream_buffer: True
   vid_stride: 50
   line_width: 1
   verbose: False
-  tracker: configs/botsort.yaml
+  tracker: configs/bytetrack.yaml
+  label_size: 20
 

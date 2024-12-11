@@ -3,11 +3,13 @@ from PIL import Image, ImageDraw, ImageFont
 import cv2
 import os
 import numpy as np
+import random
 
 class YOLOModel:
     def __init__(self, config):
         self.config = config
         self.model = YOLO(self.config.model.model_dir)
+        self.classes = self.model.names
         self.data_dir = f'{self.config.model.data_dir}'
         self.project_name = os.path.join('runs', self.config.model.project_name)
         self.font_dir = '/home/kabin/Polygon/github/yolo_model/yolo_model/fonts/Arial.ttf'
@@ -26,14 +28,16 @@ class YOLOModel:
         return
 
     def track(self):
+        self.model.fuse()
         self.config.track['project'] = self.project_name
         if not self.config.track.track_id:
-            self.__tracker_config_normalizer()
+            self.tracker_config_normalizer()
             self.model.track(**self.config.track)
         else:
-            save_path = self.__create_sequential_folder('track')
+            class_colors = {class_name: tuple(random.randint(0, 150) for _ in range(3)) for class_name in self.classes}
+            save_path = self.create_sequential_folder('track')
             cap = cv2.VideoCapture(self.config.track.source)
-            self.__tracker_config_normalizer()
+            self.tracker_config_normalizer()
             assert cap.isOpened()
             w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
             video_writer = cv2.VideoWriter(os.path.join(save_path, 'vehicle_tracking_output.avi'), cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
@@ -43,9 +47,10 @@ class YOLOModel:
                     img = Image.fromarray(im0)
                     results = self.model.track(im0, persist=True, **self.config.track)
                     draw = ImageDraw.Draw(img)
-                    for idx, box in zip(results[0].boxes.id, results[0].boxes.xyxy):
-                        draw.rectangle(box.numpy(), outline = 'red', width=2)
-                        draw.text((box[0], box[1]), str(idx.item()), font=self.font)
+                    for idx, box, cls in zip(results[0].boxes.id, results[0].boxes.xyxy, results[0].boxes.cls):
+                        draw.rectangle(box.numpy(), outline = class_colors[int(cls.item())], width=2)
+                        draw.text((box[0], box[1]), str(int(idx.item())), font=self.font)
+                        draw.text((box[0], box[1]+20), str(self.classes[int(cls.item())]), font=self.font)
                     video_writer.write(np.array(img))
                 else:
                     break    
@@ -74,22 +79,22 @@ class YOLOModel:
         cv2.destroyAllWindows()
         return
     
-    def __tracker_config_normalizer(self):
+    def tracker_config_normalizer(self):
         config = {}
         if self.config.track.track_id:
             for key, value in self.config.track.items():
-                if key == "source" or key == "track_id" or key == "save":
+                if key == "source" or key == "track_id" or key == "save" or key == 'label_size':
                     continue
                 config[key] = value
         else:
             for key, value in self.config.track.items():
-                if key == "track_id":
+                if key == "track_id" or key == 'label_size':
                     continue
                 config[key] = value
         self.config.track = config
         return
     
-    def __create_sequential_folder(self, filename):
+    def create_sequential_folder(self, filename):
         save_path = os.path.join(self.project_name, filename)
         count = 1
         while True:
