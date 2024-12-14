@@ -6,14 +6,17 @@ import os
 class SVTracker(YOLOModel):
     def __init__(self, config):
         super().__init__(config)
-        self.tracker = sv.ByteTrack()
+        self.tracker = sv.ByteTrack(
+            track_activation_threshold = 0.20,
+            lost_track_buffer = 60,
+            minimum_matching_threshold = 0.5
+            )
         self.box_annotator = sv.BoxAnnotator()
         self.label_annotator = sv.LabelAnnotator()
         self.source_path = self.config.track.source
-        self.config = self.tracker_config_normalizer(config)
 
     def __callback(self, frame: np.ndarray, _: int) -> np.ndarray:
-        results = self.model(frame, conf = 0.7, vid_stride = 50, verbose = False)[0]
+        results = self.model(frame, conf = 0.8, vid_stride = 50, verbose = False)[0]
         detections = sv.Detections.from_ultralytics(results)
         detections = self.tracker.update_with_detections(detections)
 
