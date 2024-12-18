@@ -86,7 +86,7 @@ class YOLOModel:
 
     def tracker_config_normalizer(self):
         config = {}
-        ignore_list = ["source", "track_id", "sv_track", "save", "track_activation_threshold", "lost_track_buffer", "minimum_matching_threshold", "box_thickness", "label_size"]
+        ignore_list = ["source", "track_id", "sv_track", "save", "track_activation_threshold", "lost_track_buffer", "minimum_matching_threshold", "box_thickness", "label_size", "frame_rate"]
         for key, value in self.config.track.items():
             if key in ignore_list:
                 continue
