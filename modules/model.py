@@ -79,18 +79,18 @@ class YOLOModel:
         cv2.destroyAllWindows()
         return
     
+    def analysis(self):
+        dataset_path = os.path.join(self.config.model.data_dir, 'labels')
+        # train_label_path = 
+        pass
+
     def tracker_config_normalizer(self):
         config = {}
-        if self.config.track.track_id:
-            for key, value in self.config.track.items():
-                if key == "source" or key == "track_id" or key == "save" or key == 'label_size':
-                    continue
-                config[key] = value
-        else:
-            for key, value in self.config.track.items():
-                if key == "track_id" or key == 'label_size':
-                    continue
-                config[key] = value
+        ignore_list = ["source", "track_id", "sv_track", "save", "track_activation_threshold", "lost_track_buffer", "minimum_matching_threshold", "box_thickness", "label_size"]
+        for key, value in self.config.track.items():
+            if key in ignore_list:
+                continue
+            config[key] = value
         self.config.track = config
         return
     

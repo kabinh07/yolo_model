@@ -3,7 +3,7 @@ import yaml
 import json
 from addict import Dict
 from modules.model import YOLOModel
-from modules.sv_tracker import SVTracker
+from modules.sv_tracker import SVTrackerModel
 import numpy as np
 
 def remove_null_params(config):
@@ -20,11 +20,14 @@ def main():
         config = Dict(yaml.safe_load(f))
     config = remove_null_params(config)
     print(f"Configuration:\n{json.dumps(config, indent=2)}")
-    model = YOLOModel(config)
+    if config.track.sv_track:
+        model = SVTrackerModel(config)
+    else:
+        model = YOLOModel(config)
     parser = argparse.ArgumentParser()
     parser.add_argument("method", type=str, help="type if want to train, test, predict etc.")
     args = parser.parse_args()
-    results = None
+
     if args.method == 'train':
         model.train()
     elif args.method == 'predict':
@@ -33,9 +36,6 @@ def main():
         model.track()
     elif args.method == 'count': 
         model.count()
-    elif args.method == 'test':
-        api = SVTracker(config)
-        api.track()
     else:
         print("invalid arguments")
 

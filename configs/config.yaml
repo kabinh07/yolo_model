@@ -1,15 +1,17 @@
 model:
   model_dir: models/best.pt
-  data_dir: data/test_video
-  project_name: vehicle_detection
+  data_dir: data/test
+  project_name: vehicle_detection_v2
 
 train:
-  epochs: 100
+  epochs: 50
   imgsz: 640
   batch: 
   resume: 
-  patience: 20
+  patience: 5
   optimizer: 
+  hsv_s: 0
+  hsv_v: 0.8
   
 predict:
   source: data/vehicle_detection/cctv_footage_frames
@@ -17,16 +19,23 @@ predict:
   iou: 
   imgsz: 640
   line_width:
+  save: True
 
 track:
+  sv_track: True
   track_id: True
-  source: data/test_video/test_video.webm
+  source: data/test_video/outfile_85.webm
+  track_activation_threshold: 
+  lost_track_buffer: 
+  minimum_matching_threshold: 
+  frame_rate: 5
+  box_thickness: 1
   save: True
   conf: 0.5
   stream_buffer: True
   vid_stride: 50
   line_width: 1
   verbose: False
-  tracker: configs/bytetrack.yaml
   label_size: 20
+
 
