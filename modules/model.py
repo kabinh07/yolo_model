@@ -4,6 +4,8 @@ import cv2
 import os
 import numpy as np
 import random
+from collections import Counter
+import json
 
 class YOLOModel:
     def __init__(self, config):
@@ -80,9 +82,38 @@ class YOLOModel:
         return
     
     def analysis(self):
-        dataset_path = os.path.join(self.config.model.data_dir, 'labels')
-        # train_label_path = 
-        pass
+        train_label_path = os.path.join(self.config.model.data_dir, 'train/labels')
+        val_label_path = os.path.join(self.config.model.data_dir, 'val/labels')
+        train_labels = os.listdir(train_label_path)
+        val_labels = os.listdir(val_label_path)
+        train_labels_list = []
+        val_labels_list = []
+        label_map = self.model.names
+        for label in train_labels:
+            with open(os.path.join(train_label_path, label)) as f:
+                file = f.read().split('\n')
+                file = [f for f in file if not f == '']
+            for row in file:
+                cls = int(row.split(' ')[0])
+                train_labels_list.append(label_map[cls])
+        for label in val_labels:
+            with open(os.path.join(val_label_path, label)) as f:
+                file = f.read().split('\n')
+                file = [f for f in file if not f == '']
+            for row in file:
+                cls = int(row.split(' ')[0])
+                val_labels_list.append(label_map[cls])
+        train_labels_count = Counter(train_labels_list)
+        val_labels_count = Counter(val_labels_list)
+        counts = {
+            "train_labels_count": dict(train_labels_count),
+            "val_labels_counts": dict(val_labels_count)
+        }
+        save_path = self.create_sequential_folder('analysis')
+        with open(os.path.join(save_path, "counts.json"), 'w') as f:
+            json.dump(counts, f)
+        print(f"Labels class counts are saved in {save_path}")
+        return
 
     def tracker_config_normalizer(self):
         config = {}

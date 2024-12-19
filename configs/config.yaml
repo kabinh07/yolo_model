@@ -1,6 +1,6 @@
 model:
   model_dir: models/best.pt
-  data_dir: data/test
+  data_dir: data/vehicle_3341
   project_name: vehicle_detection_v2
 
 train:

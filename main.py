@@ -36,6 +36,8 @@ def main():
         model.track()
     elif args.method == 'count': 
         model.count()
+    elif args.method == 'analyze':
+        model.analysis()
     else:
         print("invalid arguments")
 
